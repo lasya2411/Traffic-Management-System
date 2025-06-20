@@ -2,8 +2,10 @@ services:
   - type: web
     name: traffic-control
     runtime: python
-    buildCommand: "pip install -r requirements.txt"
-    startCommand: "gunicorn backend.traffic_control:app"
+    buildCommand: |
+      python -m pip install --upgrade pip setuptools wheel
+      pip install -r backend/requirements.txt
+    startCommand: "gunicorn --worker-tmp-dir /dev/shm backend.traffic_control:app"
     envVars:
       - key: PYTHON_VERSION
-        value: 3.9.7
+        value: 3.9.7  # More stable than 3.13
