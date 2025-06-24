@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traffic Control System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --primary-light: #3d566e;
+            --secondary: #34495e;
+            --green: #27ae60;
+            --green-light: #2ecc71;
+            --red: #e74c3c;
+            --red-light: #ff6b6b;
+            --yellow: #f39c12;
+            --yellow-light: #f1c40f;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --gray: #95a5a6;
+            --light-gray: #f5f7fa;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: var(--light-gray);
+            margin: 0;
+            padding: 20px;
+            color: var(--dark);
+        }
+        
+        .container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .video-panel {
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 40px);
+        }
+        
+        .video-container {
+            position: relative;
+            flex-grow: 1;
+            background: #000;
+            min-height: 0;
+        }
+        
+        .video-container img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        
+        .panel-header {
+            padding: 20px;
+            background: white;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .panel-header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+        }
+        
+        .panel-header h1 i {
+            margin-right: 12px;
+            color: var(--primary);
+        }
+        
+        .control-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            height: calc(100vh - 40px);
+        }
+        
+        .panel-section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            padding: 25px;
+        }
+        
+        .panel-section h2 {
+            margin: 0 0 20px 0;
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+        }
+        
+        .panel-section h2 i {
+            margin-right: 12px;
+            width: 24px;
+            text-align: center;
+        }
+        
+        .stat-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            align-items: center;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+        }
+        
+        .stat-label i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-weight: 600;
+            font-size: 16px;
+        }
+        
+        .red-text { color: var(--red); }
+        .yellow-text { color: var(--yellow); }
+        .green-text { color: var(--green); }
+        .blue-text { color: #3498db; }
+        
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-bottom: 12px;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        
+        .btn-start { 
+            background: var(--green); 
+            color: white; 
+            box-shadow: 0 4px 0 rgba(39, 174, 96, 0.3);
+        }
+        
+        .btn-stop { 
+            background: var(--red); 
+            color: white; 
+            box-shadow: 0 4px 0 rgba(231, 76, 60, 0.3);
+        }
+        
+        .btn-upload { 
+            background: var(--primary); 
+            color: white; 
+            box-shadow: 0 4px 0 rgba(44, 62, 80, 0.3);
+        }
+        
+        .btn:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2);
+        }
+        
+        .btn:active { 
+            transform: translateY(1px); 
+            box-shadow: 0 2px 0 rgba(0,0,0,0.2);
+        }
+        
+        .radio-group {
+            margin: 20px 0;
+        }
+        
+        .radio-option {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            padding: 10px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+        
+        .radio-option:hover {
+            background: rgba(0,0,0,0.03);
+        }
+        
+        .radio-option input {
+            margin-right: 12px;
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+        }
+        
+        .radio-option label {
+            font-size: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+        
+        .radio-option label i {
+            margin-right: 8px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .file-input {
+            width: 100%;
+            margin: 15px 0;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            background: #f9f9f9;
+        }
+        
+        .file-input:hover {
+            border-color: var(--primary);
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .signal-timings {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .timing-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .timing-label {
+            font-size: 13px;
+            color: var(--secondary);
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .timing-label i {
+            margin-right: 6px;
+        }
+        
+        .timing-value {
+            font-weight: 600;
+            font-size: 18px;
+        }
+        
+        .signal-display {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            padding: 20px;
+            background: var(--primary);
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+        
+        .signal {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 4px solid rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .signal::after {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .signal.active-red { 
+            background: var(--red); 
+            box-shadow: 0 0 20px var(--red-light);
+        }
+        .signal.active-red::after {
+            box-shadow: 0 0 30px var(--red);
+            opacity: 0.7;
+        }
+        
+        .signal.active-yellow { 
+            background: var(--yellow); 
+            box-shadow: 0 0 20px var(--yellow-light);
+        }
+        .signal.active-yellow::after {
+            box-shadow: 0 0 30px var(--yellow);
+            opacity: 0.7;
+        }
+        
+        .signal.active-green { 
+            background: var(--green); 
+            box-shadow: 0 0 20px var(--green-light);
+        }
+        .signal.active-green::after {
+            box-shadow: 0 0 30px var(--green);
+            opacity: 0.7;
+        }
+        
+        .signal.inactive { 
+            background: #4a5a6a; 
+        }
+        
+        .signal-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 5px;
+            font-size: 12px;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .video-footer {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            
+            .video-panel, .control-panel {
+                height: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="video-panel">
+            <div class="panel-header">
+                <h1><i class="fas fa-traffic-light"></i> Traffic Monitoring</h1>
+            </div>
+            <div class="video-container">
+                <img id="video-feed" style="display: none;" alt="Live Traffic Feed">
+                <img id="processed-image" style="display: none;" alt="Processed Traffic Image">
+            </div>
+            <div class="video-footer">
+                <div class="signal-display">
+                    <div>
+                        <div class="signal inactive" id="red-light"></div>
+                        <div class="signal-status">Red</div>
+                    </div>
+                    <div>
+                        <div class="signal inactive" id="yellow-light"></div>
+                        <div class="signal-status">Yellow</div>
+                    </div>
+                    <div>
+                        <div class="signal inactive" id="green-light"></div>
+                        <div class="signal-status">Green</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="control-panel">
+            <div class="panel-section">
+                <h2><i class="fas fa-chart-line"></i> Traffic Analytics</h2>
+                <div class="stat-card">
+                    <div class="stat-row">
+                        <span class="stat-label"><i class="fas fa-car"></i> Vehicles Detected:</span>
+                        <span class="stat-value" id="vehicle-count">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label"><i class="fas fa-clock"></i> Time Left:</span>
+                        <span class="stat-value blue-text" id="time-left">20s</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label"><i class="fas fa-lightbulb"></i> Current Signal:</span>
+                        <span class="stat-value" id="current-signal">
+                            <span class="signal-indicator" style="background: var(--red);"></span>
+                            RED
+                        </span>
+                    </div>
+                </div>
+                
+                <h2 style="margin-top: 25px;"><i class="fas fa-stopwatch"></i> Signal Timings</h2>
+                <div class="signal-timings">
+                    <div class="timing-item">
+                        <div class="timing-label"><i class="fas fa-clock"></i> Base Green Time</div>
+                        <div class="timing-value green-text" id="base-green-time">30s</div>
+                    </div>
+                    <div class="timing-item">
+                        <div class="timing-label"><i class="fas fa-clock"></i> Current Green Time</div>
+                        <div class="timing-value green-text" id="current-green-time">30s</div>
+                    </div>
+                    <div class="timing-item">
+                        <div class="timing-label"><i class="fas fa-clock"></i> Red Time</div>
+                        <div class="timing-value red-text" id="red-time">20s</div>
+                    </div>
+                    <div class="timing-item">
+                        <div class="timing-label"><i class="fas fa-clock"></i> Yellow Time</div>
+                        <div class="timing-value yellow-text" id="yellow-time">5s</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-section">
+                <h2><i class="fas fa-sliders-h"></i> System Controls</h2>
+                <form id="control-form" action="/control" method="post">
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="camera" name="source" value="camera" checked>
+                            <label for="camera"><i class="fas fa-video"></i> Live Camera Feed</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="image" name="source" value="image">
+                            <label for="image"><i class="fas fa-image"></i> Upload Image</label>
+                        </div>
+                    </div>
+
+                    <div id="camera-controls">
+                        <button type="submit" name="action" value="start" class="btn btn-start" id="start-btn">
+                            <i class="fas fa-play"></i> Start Detection
+                        </button>
+                        <button type="submit" name="action" value="stop" class="btn btn-stop" id="stop-btn" style="display: none;">
+                            <i class="fas fa-stop"></i> Stop Detection
+                        </button>
+                    </div>
+                </form>
+
+                <div id="image-controls" style="display: none;">
+                    <form id="upload-form" action="/upload" method="post" enctype="multipart/form-data">
+                        <input type="file" name="image" accept="image/*" class="file-input" id="file-input" required>
+                        <button type="submit" class="btn btn-upload">
+                            <i class="fas fa-upload"></i> Upload & Analyze Image
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM elements
+        const videoFeed = document.getElementById('video-feed');
+        const processedImage = document.getElementById('processed-image');
+        const cameraControls = document.getElementById('camera-controls');
+        const imageControls = document.getElementById('image-controls');
+        const cameraRadio = document.getElementById('camera');
+        const imageRadio = document.getElementById('image');
+        const startBtn = document.getElementById('start-btn');
+        const stopBtn = document.getElementById('stop-btn');
+        const fileInput = document.getElementById('file-input');
+        const uploadForm = document.getElementById('upload-form');
+        
+        // Status elements
+        const vehicleCount = document.getElementById('vehicle-count');
+        const currentSignal = document.getElementById('current-signal');
+        const timeLeft = document.getElementById('time-left');
+        const baseGreenTime = document.getElementById('base-green-time');
+        const currentGreenTime = document.getElementById('current-green-time');
+        const redTime = document.getElementById('red-time');
+        const yellowTime = document.getElementById('yellow-time');
+        
+        // Traffic lights
+        const redLight = document.getElementById('red-light');
+        const yellowLight = document.getElementById('yellow-light');
+        const greenLight = document.getElementById('green-light');
+
+        // Source selection
+        function updateSourceControls() {
+            if (cameraRadio.checked) {
+                cameraControls.style.display = 'block';
+                imageControls.style.display = 'none';
+            } else {
+                cameraControls.style.display = 'none';
+                imageControls.style.display = 'block';
+            }
+        }
+
+        cameraRadio.addEventListener('change', updateSourceControls);
+        imageRadio.addEventListener('change', updateSourceControls);
+
+        // Update system status
+        async function updateStatus() {
+            try {
+                const response = await fetch('/get_status');
+                const data = await response.json();
+                
+                // Update statistics
+                vehicleCount.textContent = data.vehicle_count;
+                timeLeft.textContent = `${data.time_left}s`;
+                baseGreenTime.textContent = `${data.base_green_time}s`;
+                currentGreenTime.textContent = `${data.current_green_time}s`;
+                redTime.textContent = `${data.red_time}s`;
+                yellowTime.textContent = `${data.yellow_time}s`;
+                
+                // Update signal display
+                let signalIndicator = '';
+                if (data.current_signal === 'red') {
+                    signalIndicator = `<span class="signal-indicator" style="background: var(--red);"></span>`;
+                    currentSignal.className = 'stat-value';
+                    currentSignal.classList.add('red-text');
+                } else if (data.current_signal === 'yellow') {
+                    signalIndicator = `<span class="signal-indicator" style="background: var(--yellow);"></span>`;
+                    currentSignal.className = 'stat-value';
+                    currentSignal.classList.add('yellow-text');
+                } else {
+                    signalIndicator = `<span class="signal-indicator" style="background: var(--green);"></span>`;
+                    currentSignal.className = 'stat-value';
+                    currentSignal.classList.add('green-text');
+                }
+                currentSignal.innerHTML = `${signalIndicator} ${data.current_signal.toUpperCase()}`;
+                
+                // Update traffic lights
+                redLight.className = 'signal';
+                yellowLight.className = 'signal';
+                greenLight.className = 'signal';
+                
+                if (data.current_signal === 'red') {
+                    redLight.classList.add('active-red');
+                    yellowLight.classList.add('inactive');
+                    greenLight.classList.add('inactive');
+                } else if (data.current_signal === 'yellow') {
+                    redLight.classList.add('inactive');
+                    yellowLight.classList.add('active-yellow');
+                    greenLight.classList.add('inactive');
+                } else {
+                    redLight.classList.add('inactive');
+                    yellowLight.classList.add('inactive');
+                    greenLight.classList.add('active-green');
+                }
+                
+                // Update button states
+                if (data.is_running) {
+                    startBtn.style.display = 'none';
+                    stopBtn.style.display = 'block';
+                } else {
+                    startBtn.style.display = 'block';
+                    stopBtn.style.display = 'none';
+                }
+                
+                // Update video/image display
+                if (data.is_running) {
+                    if (data.source === 'camera') {
+                        videoFeed.src = '/video_feed?' + new Date().getTime();
+                        videoFeed.style.display = 'block';
+                        processedImage.style.display = 'none';
+                    } else if (data.processed_image) {
+                        processedImage.src = `data:image/jpeg;base64,${data.processed_image}`;
+                        processedImage.style.display = 'block';
+                        videoFeed.style.display = 'none';
+                    }
+                } else {
+                    videoFeed.style.display = 'none';
+                    processedImage.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error updating status:', error);
+            }
+        }
+
+        // Initialize
+        updateSourceControls();
+        updateStatus();
+        setInterval(updateStatus, 1000);
+
+        // Handle form submissions without page reload
+        document.getElementById('control-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            fetch('/control', {
+                method: 'POST',
+                body: new FormData(this)
+            }).then(() => updateStatus());
+        });
+
+        document.getElementById('upload-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            fetch('/upload', {
+                method: 'POST',
+                body: new FormData(this)
+            }).then(() => updateStatus());
+        });
+    </script>
+</body>
+</html>
